@@ -12,8 +12,8 @@ function displayTasks() {
     taskDiv.classList.add("task");
 
     taskDiv.innerHTML = `
-      <span class="task">${task}</span>
-      <button class="delete-btn" onclick="deleteTask('${task}')">Delete</button>
+      <span class="task">${task.task}</span>
+      <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
     `;
 
     tasksContainer.appendChild(taskDiv);
@@ -41,8 +41,15 @@ function addTask() {
     // READ: Get tasks stored locally
     const tasks = getTasks();
 
+    const taskId = new Date().toISOString(); // Generate a unique ID for the task by converting the current date to a string
+    const newTask = {
+      id: taskId,
+      task: task
+    }; // Create a new task object to store text and ID
+
     // CREATE: Add the new task to the array
-    tasks.push(task);
+    tasks.push(newTask);
+    console.log(tasks);
 
     // CREATE: Store the updated array in localStorage
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -63,15 +70,16 @@ function addTask() {
 // DELETE:
 
 //Remove a task from local storage and update the display
-function deleteTask(task) {
+function deleteTask(taskId) {
   // READ: Get tasks stored locally and filter out the task to delete
-  const tasks = getTasks().filter(t => t !== task); // READ: Get tasks stored locally and filter out the task to be deleted (filter returns a new array)
+  const tasks = getTasks().filter(t => t.id !== taskId); // READ: Get tasks stored locally and filter out the task to be deleted (filter returns a new array)
 
   // DELETE: Store the updated array in localStorage
   localStorage.setItem("tasks", JSON.stringify(tasks));
 
   // READ: Display the updated tasks
   displayTasks();
+  console.log(tasks);
 }
 
 
