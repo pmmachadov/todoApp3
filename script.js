@@ -11,14 +11,52 @@ function displayTasks() {
     const taskDiv = document.createElement("div");
     taskDiv.classList.add("task-container");
 
-    taskDiv.innerHTML = `
-      <span class="task">${task.task}</span>
-      <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
-      <button class="edit-btn" onclick="updateTask('${task.id}')">Edit</button>
-          `;
+    // Add a checkbox to mark tasks as complete
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.completed || false; // I || false here to prevent the checkbox from being checked if task.completed is null
+    checkbox.addEventListener("change", () => toggleTaskComplete(task.id));
+
+    taskDiv.appendChild(checkbox);
+
+    // Add a span for the task text with a line-through style if completed
+    const taskText = document.createElement("span");
+    taskText.classList.add("task");
+    taskText.style.textDecoration = task.completed ? "line-through" : "none";
+    taskText.style.opacity = task.completed ? "0.5" : "1";
+    taskText.textContent = task.task;
+
+    taskDiv.appendChild(taskText);
+
+    // Add buttons for delete and edit
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-btn");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click", () => deleteTask(task.id));
+
+    const editButton = document.createElement("button");
+    editButton.classList.add("edit-btn");
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => updateTask(task.id));
+
+    taskDiv.appendChild(deleteButton);
+    taskDiv.appendChild(editButton);
 
     tasksContainer.appendChild(taskDiv);
   });
+}
+
+// Toggle task completion status
+function toggleTaskComplete(taskId) {
+  const tasks = getTasks().map(task => {
+    if (task.id === taskId) {
+      task.completed = !task.completed;
+    }
+    return task;
+  });
+
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  displayTasks();
 }
 
 
@@ -104,6 +142,7 @@ function updateTask(taskId) {
   taskInput.value = task.task;
   deleteTask(taskId);
 }
+
 
 
 
