@@ -9,16 +9,24 @@ function displayTasks() {
 
   tasks.forEach(task => {
     const taskDiv = document.createElement("div");
-    taskDiv.classList.add("task");
+    taskDiv.classList.add("task-container");
 
     taskDiv.innerHTML = `
       <span class="task">${task.task}</span>
       <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
-    `;
+      <button class="edit-btn" onclick="updateTask('${task.id}')">Edit</button>
+          `;
 
     tasksContainer.appendChild(taskDiv);
   });
 }
+
+
+
+
+
+
+
 
 function getTasks() {
   const tasksString = localStorage.getItem("tasks");  // READ: Get tasks stored locally
@@ -82,6 +90,20 @@ function deleteTask(taskId) {
   console.log(tasks);
 }
 
+
+
+
+// UPDATE:
+
+function updateTask(taskId) {
+
+  // Update tasks and save to local storage
+  const tasks = getTasks(); // READ: Get tasks stored locally
+  const task = tasks.find(t => t.id === taskId);
+  const taskInput = document.getElementById("taskInput");
+  taskInput.value = task.task;
+  deleteTask(taskId);
+}
 
 
 
