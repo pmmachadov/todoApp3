@@ -1,6 +1,3 @@
-// READ:
-
-// Display tasks in the HTML container
 function displayTasks() {
   const tasksContainer = document.getElementById("tasks-container");
   tasksContainer.innerHTML = ""; // Clear the container
@@ -8,43 +5,45 @@ function displayTasks() {
   const tasks = getTasks(); // Get tasks stored locally
 
   tasks.forEach(task => {
-    const taskDiv = document.createElement("div");
-    taskDiv.classList.add("task-container");
+    const taskElement = document.createElement('div');
+    taskElement.classList.add('card');
 
-    // Add a checkbox to mark tasks as complete
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = task.completed || false; // I || false here to prevent the checkbox from being checked if task.completed is null
-    checkbox.addEventListener("change", () => toggleTaskComplete(task.id));
+    // Task Text
+    const taskTextElement = document.createElement('p');
+    taskTextElement.textContent = task.task;
+    taskTextElement.classList.add('task-text');
+    taskElement.appendChild(taskTextElement);
 
-    taskDiv.appendChild(checkbox);
+    // Completion Checkbox
+    const completedCheckbox = document.createElement('input');
+    completedCheckbox.type = 'checkbox';
+    completedCheckbox.checked = task.completed;
+    completedCheckbox.addEventListener('change', () => toggleTaskComplete(task.id));
+    taskElement.appendChild(completedCheckbox);
 
-    // Add a span for the task text with a line-through style if completed
-    const taskText = document.createElement("span");
-    taskText.classList.add("task");
-    taskText.style.textDecoration = task.completed ? "line-through" : "none";
-    taskText.style.opacity = task.completed ? "0.5" : "1";
-    taskText.textContent = task.task;
+    // Delete Button
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Eliminar';
+    deleteButton.classList.add('delete-btn');
+    deleteButton.addEventListener('click', () => deleteTask(task.id));
+    taskElement.appendChild(deleteButton);
 
-    taskDiv.appendChild(taskText);
+    // Edit Button
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Editar';
+    editButton.classList.add('edit-btn');
+    editButton.addEventListener('click', () => updateTask(task.id));
+    taskElement.appendChild(editButton);
 
-    // Add buttons for delete and edit
-    const deleteButton = document.createElement("button");
-    deleteButton.classList.add("delete-btn");
-    deleteButton.textContent = "Delete";
-    deleteButton.addEventListener("click", () => deleteTask(task.id));
-
-    const editButton = document.createElement("button");
-    editButton.classList.add("edit-btn");
-    editButton.textContent = "Edit";
-    editButton.addEventListener("click", () => updateTask(task.id));
-
-    taskDiv.appendChild(deleteButton);
-    taskDiv.appendChild(editButton);
-
-    tasksContainer.appendChild(taskDiv);
+    tasksContainer.appendChild(taskElement);
   });
 }
+
+
+
+
+
+
 
 // Toggle task completion status
 function toggleTaskComplete(taskId) {
@@ -87,7 +86,7 @@ function addTask() {
     // READ: Get tasks stored locally
     const tasks = getTasks();
 
-    const taskId = new Date().toISOString(); // Generate a unique ID for the task by converting the current date to a string
+    let taskId = crypto.randomUUID();
     const newTask = {
       id: taskId,
       task: task
@@ -96,6 +95,7 @@ function addTask() {
     // CREATE: Add the new task to the array
     tasks.push(newTask);
     console.log(tasks);
+    console.log(taskId);
 
     // CREATE: Store the updated array in localStorage
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -142,6 +142,8 @@ function updateTask(taskId) {
   taskInput.value = task.task;
   deleteTask(taskId);
 }
+
+
 
 
 
