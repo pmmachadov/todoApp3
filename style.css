@@ -40,7 +40,17 @@ input[type="text"] {
   border: none;
   border-radius: 0.5rem;
   font-size: 1rem;
-  padding: 1.2rem;
+  padding: 0.9rem;
+  width: 30vw;
+}
+
+.input-fields {
+  align-items: center;
+  color: #ff9800;
+  display: flex;
+  font-size: 1rem;
+  font-weight: bold;
+  justify-content: space-evenly;
 }
 
 input[type="checkbox"] {
@@ -126,9 +136,9 @@ button:hover {
 }
 
 .completed {
-  text-decoration: line-through;
   color: #6e6e6e;
   opacity: 0.6;
+  text-decoration: line-through;
 }
 
 .card {
