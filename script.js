@@ -5,16 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function displayTasks() {
     const tasksContainer = document.getElementById("tasks-container");
-    tasksContainer.innerHTML = ""; // Clear the container
-
+    const searchInput = document.getElementById("searchInput").value.toLowerCase();
     const tasks = getTasks(); // Get tasks stored locally
+
+    // Clear the container
+    tasksContainer.innerHTML = "";
 
     // Separate tasks into completed and incomplete
     const completedTasks = tasks.filter(task => task.completed);
     const incompleteTasks = tasks.filter(task => !task.completed);
 
     // Display incomplete tasks that match the search input
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
     incompleteTasks.forEach(task => {
       // Added check for search input matching
       if (task.task.toLowerCase().includes(searchInput)) {
@@ -23,18 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Display completed tasks below
+    // Remove the completed tasks container and recreate it
+    const completedTasksContainer = document.querySelector('.completed-tasks-container');
+    if (completedTasksContainer) {
+      completedTasksContainer.remove();
+      getTasks();
+    }
+
     if (completedTasks.length > 0) {
-      const completedTasksContainer = document.createElement('div');
-      completedTasksContainer.classList.add('completed-tasks-container');
+      const newCompletedTasksContainer = document.createElement('div');
+      newCompletedTasksContainer.classList.add('completed-tasks-container');
 
       completedTasks.forEach(task => {
         const taskElement = createTaskElement(task);
         taskElement.classList.add('completed');
-        completedTasksContainer.appendChild(taskElement);
+        newCompletedTasksContainer.appendChild(taskElement);
       });
 
-      tasksContainer.appendChild(completedTasksContainer);
+      tasksContainer.appendChild(newCompletedTasksContainer);
     }
   }
 
@@ -61,23 +68,22 @@ document.addEventListener("DOMContentLoaded", () => {
     taskElement.appendChild(deleteButton);
 
     const editButton = document.createElement('button');
-    editButton.textContent = 'Editar';
+    editButton.textContent = 'Edit';
     editButton.classList.add('edit-btn');
     editButton.addEventListener('click', () => {
       taskTextElement.contentEditable = true;
+      updateTask(task.id);
     });
     taskElement.appendChild(editButton);
-
     return taskElement;
   }
 
   function addTask() {
     const taskInput = document.getElementById("taskInput");
-    const task = taskInput.value.trim();
 
+    const task = taskInput.value.trim();
     if (task !== "") {
       const tasks = getTasks();
-
       let taskId = crypto.randomUUID();
       const newTask = {
         id: taskId,
@@ -87,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       tasks.push(newTask);
       localStorage.setItem("tasks", JSON.stringify(tasks));
-
       taskInput.value = "";
       displayTasks();
     }
@@ -98,42 +103,48 @@ document.addEventListener("DOMContentLoaded", () => {
     return tasksString ? JSON.parse(tasksString) : [];
   }
 
-  function toggleTaskComplete(taskId, taskElement) {
-    const tasks = getTasks().map(task => {
-      if (task.id === taskId) {
-        task.completed = !task.completed;
+  function toggleTaskComplete(taskId, taskElement) {  // taskElement is the card element
+    const tasks = getTasks().map(task => {  // Get tasks stored locally
+      if (task.id === taskId) { // If the task id matches the id of the task that was clicked
+        task.completed = !task.completed; // Toggle the completed property
+
       }
-      return task;
+      return task;  // Return the task
     });
 
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    displayTasks();
+    localStorage.setItem("tasks", JSON.stringify(tasks)); // Store the updated tasks
+    displayTasks(); // Display the updated tasks
+    const completedTasksContainer = document.querySelector('.completed-tasks-container'); // Get the completed tasks container
+    const taskIndex = tasks.findIndex(task => task.id === taskId);  // Get the index of the task that was clicked
 
-    const completedTasksContainer = document.querySelector('.completed-tasks-container');
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
-
-    if (taskIndex !== -1 && tasks[taskIndex].completed) {
-      if (!taskElement.classList.contains('completed')) {
-        taskElement.classList.add('completed');
-        completedTasksContainer.appendChild(taskElement);
+    if (taskIndex !== -1) { // If the task was found
+      if (tasks[taskIndex].completed) { // If the task is completed
+        // Task is completed
+        if (!taskElement.classList.contains('completed')) { // If the task element does not have the completed class
+          taskElement.classList.add('completed'); // Add the completed class
+          completedTasksContainer.appendChild(taskElement); // Append the task element to the completed tasks container
+          if (completedTasksContainer.contains(taskElement)) {
+            displayTasks();
+            return;
+          }
+        }
+      } else {
+        // Task is incomplete
+        taskElement.classList.remove('completed');  // Remove the completed class
       }
-    } else {
-      taskElement.classList.remove('completed');
     }
   }
+
 
   function updateTask(taskId) {
     const originalTasks = getTasks();
     let tasks = originalTasks.slice();
-
     const task = tasks.find(task => task.id === taskId);
 
     if (task) {
       let taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
       taskElement.parentNode.removeChild(taskElement);
-
       tasks = tasks.filter(task => task.id !== taskId);
-
       taskElement = document.querySelector(`[data-task-id="${taskId}"] p`);
       if (!taskElement) {
         taskElement = createTaskElement(task);
@@ -189,11 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event listener for the "input" event on the search input
   document.getElementById("searchInput").addEventListener("input", function () {
-    displayTasks();
-  });
-
-  // Event listener for the "click" event on the search button
-  document.getElementById("searchButton").addEventListener("click", function () {
     displayTasks();
   });
 
