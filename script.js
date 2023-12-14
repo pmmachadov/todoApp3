@@ -55,28 +55,48 @@ document.addEventListener("DOMContentLoaded", () => {
     taskTextElement.classList.add('task-text');
     taskElement.appendChild(taskTextElement);
 
-    const completedCheckbox = document.createElement('input');
-    completedCheckbox.type = 'checkbox';
-    completedCheckbox.checked = task.completed;
+    const completedCheckbox = createCheckbox(task.completed);
     completedCheckbox.addEventListener('change', () => toggleTaskComplete(task.id, taskElement));
     taskElement.appendChild(completedCheckbox);
 
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Eliminar';
-    deleteButton.classList.add('delete-btn');
-    deleteButton.addEventListener('click', () => deleteTask(task.id));
+    const deleteButton = createButton('Eliminar', 'delete-btn', () => deleteTask(task.id));
     taskElement.appendChild(deleteButton);
 
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Edit';
-    editButton.classList.add('edit-btn');
-    editButton.addEventListener('click', () => {
-      taskTextElement.contentEditable = true;
-      updateTask(task.id);
-    });
+    const editButton = createButton('Editar', 'edit-btn', () => editTask(task.id, taskTextElement));
     taskElement.appendChild(editButton);
+
     return taskElement;
   }
+
+  function createCheckbox(checked) {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = checked;
+    return checkbox;
+  }
+
+  function createButton(text, className, onClick) {
+    const button = document.createElement('button');
+    button.textContent = text;
+    button.classList.add(className);
+    button.addEventListener('click', onClick);
+    return button;
+  }
+
+  function editTask(taskId, taskTextElement) {
+    taskTextElement.contentEditable = true;
+    taskTextElement.focus();
+
+    taskTextElement.addEventListener('blur', () => {
+      taskTextElement.contentEditable = false;
+      editTaskText(taskId, taskTextElement);
+    });
+  }
+
+
+
+
+
 
   function addTask() {
     const taskInput = document.getElementById("taskInput");
@@ -136,31 +156,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  function updateTask(taskId) {
-    const originalTasks = getTasks();
-    let tasks = originalTasks.slice();
-    const task = tasks.find(task => task.id === taskId);
-
-    if (task) {
-      let taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-      taskElement.parentNode.removeChild(taskElement);
-      tasks = tasks.filter(task => task.id !== taskId);
-      taskElement = document.querySelector(`[data-task-id="${taskId}"] p`);
-      if (!taskElement) {
-        taskElement = createTaskElement(task);
-        document.getElementById('tasks-container').appendChild(taskElement);
-      } else {
-        taskElement.textContent = task.task;
+  function editTaskText(taskId, taskTextElement) {
+    const editedTaskText = taskTextElement.textContent.trim();
+    const tasks = getTasks().map(task => {
+      if (task.id === taskId) {
+        task.task = editedTaskText;
       }
+      return task;
+    });
 
-      tasks.push({
-        id: taskId,
-        task: task.task,
-        completed: task.completed
-      });
-
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
   }
 
   function deleteTask(taskId) {
