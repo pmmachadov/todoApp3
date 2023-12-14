@@ -77,45 +77,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function createTaskElement(task) {
-    const taskElement = document.createElement('div');
-    taskElement.classList.add('card');
-    taskElement.setAttribute('data-task-id', task.id);
+  function addTask() {
+    const taskInput = document.getElementById("taskInput");
+    const task = taskInput.value.trim();
 
-    // Task Text
-    const taskTextElement = document.createElement('p');
-    taskTextElement.textContent = task.task;
-    taskTextElement.classList.add('task-text');
-    taskElement.appendChild(taskTextElement);
+    if (task !== "") {
+      const tasks = getTasks();
 
-    // Completion Checkbox
-    const completedCheckbox = document.createElement('input');
-    completedCheckbox.type = 'checkbox';
-    completedCheckbox.checked = task.completed;
-    completedCheckbox.addEventListener('change', () => toggleTaskComplete(task.id, taskElement));
-    taskElement.appendChild(completedCheckbox);
+      let taskId = crypto.randomUUID();
+      const newTask = {
+        id: taskId,
+        task: task,
+        completed: false
+      };
 
-    // Delete Button
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Eliminar';
-    deleteButton.classList.add('delete-btn');
-    deleteButton.addEventListener('click', () => deleteTask(task.id));
-    taskElement.appendChild(deleteButton);
+      tasks.push(newTask);
+      localStorage.setItem("tasks", JSON.stringify(tasks));
 
-    // Edit Button
-    const editButton = document.createElement('button');
-    editButton.textContent = 'Editar';
-    editButton.classList.add('edit-btn');
-    // Update the task text on click
-    editButton.addEventListener('click', () => {
-      taskTextElement.contentEditable = true;
-      taskTextElement.focus();
-      updateTask(task.id); // Add this line to call updateTask
-    });
-    taskElement.appendChild(editButton);
+      taskInput.value = "";
+      displayTasks();
+    }
+  }
 
-
-    return taskElement;
+  function getTasks() {
+    const tasksString = localStorage.getItem("tasks");
+    return tasksString ? JSON.parse(tasksString) : [];
   }
 
   function toggleTaskComplete(taskId, taskElement) {
@@ -142,39 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
       // If the task is not completed, make sure it doesn't have the completed class
       taskElement.classList.remove('completed');
     }
-  }
-
-  function getTasks() {
-    const tasksString = localStorage.getItem("tasks");
-    return tasksString ? JSON.parse(tasksString) : [];
-  }
-
-  function addTask() {
-    const taskInput = document.getElementById("taskInput");
-    const task = taskInput.value.trim();
-
-    if (task !== "") {
-      const tasks = getTasks();
-
-      let taskId = crypto.randomUUID();
-      const newTask = {
-        id: taskId,
-        task: task,
-        completed: false
-      };
-
-      tasks.push(newTask);
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-
-      taskInput.value = "";
-      displayTasks();
-    }
-  }
-
-  function deleteTask(taskId) {
-    const tasks = getTasks().filter(t => t.id !== taskId);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    displayTasks();
   }
 
   function updateTask(taskId) {
@@ -211,6 +164,12 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("tasks", JSON.stringify(tasks));
     }
 
+  }
+
+  function deleteTask(taskId) {
+    const tasks = getTasks().filter(t => t.id !== taskId);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
   }
 
   function updateTaskTextOnEnter(event, taskId, taskTextElement) {
