@@ -9,25 +9,39 @@
 </head>
 
 <body>
-  <header>
-    <h1>To do App</h1>
-  </header>
-  <div class="container">
-    <div class="search-container">
-      <div class="input-fields">
-        <label for="searchInput">Search</label>
-        <input type="text" id="searchInput" placeholder="Search task">
-        <label for="taskInput">Add new task</label>
-        <input type="text" id="taskInput" placeholder="Add new task">
-        <button id="addTaskButton">Agregar Tarea</button>
-      </div>
-      <div class="add-task-container">
-      </div>
-      <div id="tasks-container">
+  <div class="sidebar">
+    <button id="toggleSidebarButton">&#9776;</button>
+
+    <nav>
+      <ul>
+        <li><a href="#">Link</a></li>
+      </ul>
+
+    </nav>
+  </div>
+
+  <div class="content">
+    <header>
+      <h1>To do App</h1>
+    </header>
+    <div class="container">
+      <div class="search-container">
+        <div class="input-fields">
+          <label for="searchInput">Search</label>
+          <input type="text" id="searchInput" placeholder="Search task">
+          <label for="taskInput">Add new task</label>
+          <input type="text" id="taskInput" placeholder="Add new task">
+          <button id="addTaskButton" class="add-task-btn">Add Task</button>
+        </div>
+        <div class="add-task-container">
+        </div>
+        <div id="tasks-container">
+        </div>
       </div>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
