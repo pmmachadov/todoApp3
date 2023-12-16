@@ -75,6 +75,10 @@ button#add-btn {
 }
 
 button#addTaskButton {
+  -moz-border-radius: 0.5rem;
+  -ms-border-radius: 0.5rem;
+  -o-border-radius: 0.5rem;
+  -webkit-border-radius: 0.5rem;
   background-color: #ff9800;
   border: none;
   border-radius: 0.5rem;
@@ -83,13 +87,9 @@ button#addTaskButton {
   font-size: 1rem;
   font-weight: 600;
   padding: 1rem;
-  -webkit-border-radius: 0.5rem;
-  -moz-border-radius: 0.5rem;
-  -ms-border-radius: 0.5rem;
-  -o-border-radius: 0.5rem;
 }
 
-button#add-btn:hover {
+button#addTaskButton:hover {
   -moz-transition: 0.3s;
   -ms-transition: 0.3s;
   -o-transition: 0.3s;
@@ -187,4 +187,66 @@ button:hover {
   -o-transform: scale(1.1);
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: #333;
+  color: #fff;
+  height: 100%;
+  left: -250px;
+  position: fixed;
+  top: 0;
+  transition: left 0.3s ease;
+  width: 250px;
+}
+
+.sidebar.open {
+  left: 0;
+
+  /* Display the sidebar when the 'open' class is present */
+}
+
+#toggleSidebarButton {
+  -moz-border-radius: 1rem;
+  -ms-border-radius: 1rem;
+  -o-border-radius: 1rem;
+  -webkit-border-radius: 1rem;
+  background-color: #333;
+  border: none;
+  border-radius: 1rem;
+  color: #fff;
+  cursor: pointer;
+  font-size: 2rem;
+  left: 1rem;
+  padding: 0.4rem 1rem;
+  position: fixed;
+  top: 1rem;
+  z-index: 2;
+}
+
+#toggleSidebarButton:hover {
+  background-color: #555;
+}
+
+.sidebar a {
+  color: #818181;
+  display: block;
+  font-size: 18px;
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.content {
+  -moz-transition: margin-left 0.5s;
+  -ms-transition: margin-left 0.5s;
+  -o-transition: margin-left 0.5s;
+  -webkit-transition: margin-left 0.5s;
+  margin-left: 250px;
+  padding: 16px;
+  transition: margin-left 0.5s;
 }

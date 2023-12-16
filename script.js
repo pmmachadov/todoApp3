@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const DELETE_BTN_CLASS = "delete-btn";
   const EDIT_BTN_CLASS = "edit-btn";
 
+  function getTasks() {
+    const tasksString = localStorage.getItem("tasks");
+    return tasksString ? JSON.parse(tasksString) : [];
+  }
+
   addTaskButton.addEventListener("click", addTask);
 
   taskInput.addEventListener("keyup", function (event) {
@@ -120,11 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function getTasks() {
-    const tasksString = localStorage.getItem("tasks");
-    return tasksString ? JSON.parse(tasksString) : [];
-  }
-
   function toggleTaskComplete(taskId, taskElement) {
     const tasks = getTasks().map(task => {
       if (task.id === taskId) {
@@ -202,3 +202,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+const sidebar = document.querySelector('.sidebar');
+const content = document.querySelector('.content');
+const toggleButton = document.querySelector('#toggleSidebarButton');
+
+toggleButton.addEventListener('click', toggleSidebar);
+content.addEventListener('click', closeSidebarOutside);
+
+function toggleSidebar() {
+  sidebar.classList.toggle('open');
+}
+
+function closeSidebarOutside(event) {
+  if (sidebar.classList.contains('open') && !event.target.closest('.sidebar')) {
+    sidebar.classList.remove('open');
+  }
+}
