@@ -109,12 +109,6 @@ button.edit-btn {
   padding: 0.5rem 1.5rem;
 }
 
-button:hover {
-  background-color: #0096aa;
-  color: #000000;
-  transition: 0.3s;
-}
-
 .delete-btn {
   background-color: #0096aa;
   border: none;
@@ -142,6 +136,7 @@ button:hover {
 }
 
 .task-text {
+  font-size: 1.2rem;
   overflow-wrap: break-word;
   text-align: left;
   white-space: pre-wrap;
@@ -159,34 +154,15 @@ button:hover {
 }
 
 .card {
-  -moz-border-radius: 1rem;
-  -moz-transition: transform 0.2s ease-in-out;
-  -ms-border-radius: 1rem;
-  -ms-transition: transform 0.2s ease-in-out;
-  -o-border-radius: 1rem;
-  -o-transition: transform 0.2s ease-in-out;
   -webkit-border-radius: 1rem;
-  -webkit-transition: transform 0.2s ease-in-out;
   background-color: #b8b8b8;
   border-radius: 1rem;
   color: black;
-  margin-bottom: 2.4rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin: 1rem;
   max-width: 30ch;
   overflow: hidden;
-  padding: 1.2rem;
-  transform: scale(1);
-  transition: transform 0.2s ease-in-out;
+  padding: 2rem 4rem;
   white-space: nowrap;
-}
-
-.card:hover {
-  -moz-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
 }
 
 /* Sidebar */
@@ -242,11 +218,29 @@ button:hover {
 }
 
 .content {
-  -moz-transition: margin-left 0.5s;
-  -ms-transition: margin-left 0.5s;
-  -o-transition: margin-left 0.5s;
-  -webkit-transition: margin-left 0.5s;
+  -moz-transition: margin-left 1s;
+  -ms-transition: margin-left 1s;
+  -o-transition: margin-left 1s;
+  -webkit-transition: margin-left 1s;
   margin-left: 250px;
   padding: 16px;
-  transition: margin-left 0.5s;
+  transition: margin-left 1s;
+}
+
+.favorite {
+  border: 0.5rem solid #9dff00;
+}
+
+.favorite-btn {
+  -moz-transition: color 0.5s ease, transform 0.5s ease;
+  -ms-transition: color 0.5s ease, transform 0.5s ease;
+  -o-transition: color 0.5s ease, transform 0.5s ease;
+  -webkit-transition: color 0.5s ease, transform 0.5s ease;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.6em;
+  margin-left: 0.5rem;
+  padding: 1rem;
+  transition: color 0.5s ease, transform 0.5s ease;
 }
