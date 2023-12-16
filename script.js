@@ -59,6 +59,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function toggleFavorite(taskId, favoriteButton) {
+    const tasks = getTasks().map(task => {
+      if (task.id === taskId) {
+        task.favorite = !task.favorite;
+      }
+      return task;
+    });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
+
+    const taskElement = favoriteButton.closest(`.${TASK_CONTAINER_CLASS}`);
+    taskElement.classList.toggle("favorite", tasks.find(task => task.id === taskId).favorite);
+  }
+
   function createTaskElement(task) {
     const taskElement = document.createElement("div");
     taskElement.classList.add(TASK_CONTAINER_CLASS);
@@ -73,11 +88,18 @@ document.addEventListener("DOMContentLoaded", () => {
     completedCheckbox.addEventListener("change", () => toggleTaskComplete(task.id, taskElement));
     taskElement.appendChild(completedCheckbox);
 
+    const favoriteButton = createButton("⭐", "favorite-btn", (event) => toggleFavorite(task.id, event.target));
+    taskElement.appendChild(favoriteButton);
+
     const deleteButton = createButton("Eliminar", DELETE_BTN_CLASS, () => deleteTask(task.id));
     taskElement.appendChild(deleteButton);
 
     const editButton = createButton("Editar", EDIT_BTN_CLASS, () => editTask(task.id, taskTextElement));
     taskElement.appendChild(editButton);
+
+    if (task.favorite) {
+      taskElement.classList.add("favorite");
+    }
 
     return taskElement;
   }
@@ -219,3 +241,7 @@ function closeSidebarOutside(event) {
     sidebar.classList.remove('open');
   }
 }
+
+
+
+
