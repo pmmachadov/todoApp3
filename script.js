@@ -1,43 +1,52 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const tasksContainer = document.getElementById("tasks-container");
+  const searchInput = document.querySelector("#searchInput");
+  const taskInput = document.querySelector("#taskInput");
+  const addTaskButton = document.getElementById("addTaskButton");
 
-  // Display tasks on page load
+  const CLASS_COMPLETED = "completed";
+  const TASK_CONTAINER_CLASS = "card";
+  const DELETE_BTN_CLASS = "delete-btn";
+  const EDIT_BTN_CLASS = "edit-btn";
+
+  addTaskButton.addEventListener("click", addTask);
+
+  taskInput.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+      addTask();
+    }
+  });
+
   displayTasks();
 
   function displayTasks() {
-    const tasksContainer = document.getElementById("tasks-container");
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const tasks = getTasks(); // Get tasks stored locally
-
-    // Clear the container
+    const searchInputValue = searchInput.value.toLowerCase();
+    const tasks = getTasks();
     tasksContainer.innerHTML = "";
 
-    // Separate tasks into completed and incomplete
     const completedTasks = tasks.filter(task => task.completed);
     const incompleteTasks = tasks.filter(task => !task.completed);
 
-    // Display incomplete tasks that match the search input
     incompleteTasks.forEach(task => {
-      // Added check for search input matching
-      if (task.task.toLowerCase().includes(searchInput)) {
+      if (task.task.toLowerCase().includes(searchInputValue)) {
         const taskElement = createTaskElement(task);
         tasksContainer.appendChild(taskElement);
       }
     });
 
-    // Remove the completed tasks container and recreate it
-    const completedTasksContainer = document.querySelector('.completed-tasks-container');
+    const completedTasksContainer = document.querySelector(`.${CLASS_COMPLETED}`);
     if (completedTasksContainer) {
       completedTasksContainer.remove();
       getTasks();
     }
 
     if (completedTasks.length > 0) {
-      const newCompletedTasksContainer = document.createElement('div');
-      newCompletedTasksContainer.classList.add('completed-tasks-container');
+      const newCompletedTasksContainer = document.createElement("div");
+      newCompletedTasksContainer.classList.add(CLASS_COMPLETED);
 
       completedTasks.forEach(task => {
         const taskElement = createTaskElement(task);
-        taskElement.classList.add('completed');
+        taskElement.classList.add(CLASS_COMPLETED);
         newCompletedTasksContainer.appendChild(taskElement);
       });
 
@@ -46,40 +55,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createTaskElement(task) {
-    const taskElement = document.createElement('div');
-    taskElement.classList.add('card');
-    taskElement.setAttribute('data-task-id', task.id);
+    const taskElement = document.createElement("div");
+    taskElement.classList.add(TASK_CONTAINER_CLASS);
+    taskElement.setAttribute("data-task-id", task.id);
 
-    const taskTextElement = document.createElement('p');
+    const taskTextElement = document.createElement("p");
     taskTextElement.textContent = task.task;
-    taskTextElement.classList.add('task-text');
+    taskTextElement.classList.add("task-text");
     taskElement.appendChild(taskTextElement);
 
     const completedCheckbox = createCheckbox(task.completed);
-    completedCheckbox.addEventListener('change', () => toggleTaskComplete(task.id, taskElement));
+    completedCheckbox.addEventListener("change", () => toggleTaskComplete(task.id, taskElement));
     taskElement.appendChild(completedCheckbox);
 
-    const deleteButton = createButton('Eliminar', 'delete-btn', () => deleteTask(task.id));
+    const deleteButton = createButton("Eliminar", DELETE_BTN_CLASS, () => deleteTask(task.id));
     taskElement.appendChild(deleteButton);
 
-    const editButton = createButton('Editar', 'edit-btn', () => editTask(task.id, taskTextElement));
+    const editButton = createButton("Editar", EDIT_BTN_CLASS, () => editTask(task.id, taskTextElement));
     taskElement.appendChild(editButton);
 
     return taskElement;
   }
 
   function createCheckbox(checked) {
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
     checkbox.checked = checked;
     return checkbox;
   }
 
   function createButton(text, className, onClick) {
-    const button = document.createElement('button');
+    const button = document.createElement("button");
     button.textContent = text;
     button.classList.add(className);
-    button.addEventListener('click', onClick);
+    button.addEventListener("click", onClick);
     return button;
   }
 
@@ -87,28 +96,21 @@ document.addEventListener("DOMContentLoaded", () => {
     taskTextElement.contentEditable = true;
     taskTextElement.focus();
 
-    taskTextElement.addEventListener('blur', () => {
+    taskTextElement.addEventListener("blur", () => {
       taskTextElement.contentEditable = false;
       editTaskText(taskId, taskTextElement);
     });
   }
 
-
-
-
-
-
   function addTask() {
-    const taskInput = document.getElementById("taskInput");
-
     const task = taskInput.value.trim();
     if (task !== "") {
       const tasks = getTasks();
-      let taskId = crypto.randomUUID();
+      const taskId = crypto.randomUUID();
       const newTask = {
         id: taskId,
         task: task,
-        completed: false
+        completed: false,
       };
 
       tasks.push(newTask);
@@ -123,38 +125,34 @@ document.addEventListener("DOMContentLoaded", () => {
     return tasksString ? JSON.parse(tasksString) : [];
   }
 
-  function toggleTaskComplete(taskId, taskElement) {  // taskElement is the card element
-    const tasks = getTasks().map(task => {  // Get tasks stored locally
-      if (task.id === taskId) { // If the task id matches the id of the task that was clicked
-        task.completed = !task.completed; // Toggle the completed property
-
+  function toggleTaskComplete(taskId, taskElement) {
+    const tasks = getTasks().map(task => {
+      if (task.id === taskId) {
+        task.completed = !task.completed;
       }
-      return task;  // Return the task
+      return task;
     });
 
-    localStorage.setItem("tasks", JSON.stringify(tasks)); // Store the updated tasks
-    displayTasks(); // Display the updated tasks
-    const completedTasksContainer = document.querySelector('.completed-tasks-container'); // Get the completed tasks container
-    const taskIndex = tasks.findIndex(task => task.id === taskId);  // Get the index of the task that was clicked
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
+    const completedTasksContainer = document.querySelector(`.${CLASS_COMPLETED}`);
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
 
-    if (taskIndex !== -1) { // If the task was found
-      if (tasks[taskIndex].completed) { // If the task is completed
-        // Task is completed
-        if (!taskElement.classList.contains('completed')) { // If the task element does not have the completed class
-          taskElement.classList.add('completed'); // Add the completed class
-          completedTasksContainer.appendChild(taskElement); // Append the task element to the completed tasks container
+    if (taskIndex !== -1) {
+      if (tasks[taskIndex].completed) {
+        if (!taskElement.classList.contains(CLASS_COMPLETED)) {
+          taskElement.classList.add(CLASS_COMPLETED);
+          completedTasksContainer.appendChild(taskElement);
           if (completedTasksContainer.contains(taskElement)) {
             displayTasks();
             return;
           }
         }
       } else {
-        // Task is incomplete
-        taskElement.classList.remove('completed');  // Remove the completed class
+        taskElement.classList.remove(CLASS_COMPLETED);
       }
     }
   }
-
 
   function editTaskText(taskId, taskTextElement) {
     const editedTaskText = taskTextElement.textContent.trim();
@@ -190,30 +188,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Event listener for the "Enter" key to facilitate task creation
-  document.getElementById("taskInput").addEventListener("keyup", function (event) {
-    if (event.key === "Enter") {
-      addTask();
-    }
-  });
-
-  // Event listener for updating task text when the "Enter" key is pressed
   document.getElementById("tasks-container").addEventListener("keyup", function (event) {
-    const taskId = event.target.closest('.card').getAttribute('data-task-id');
+    const taskId = event.target.closest(`.${TASK_CONTAINER_CLASS}`).getAttribute("data-task-id");
     const taskTextElement = event.target;
     updateTaskTextOnEnter(event, taskId, taskTextElement);
   });
 
-  // Event listener for the "input" event on the search input
-  document.getElementById("searchInput").addEventListener("input", function () {
-    displayTasks();
-  });
+  searchInput.addEventListener("input", displayTasks);
 
-  // Event listener for the "keyup" event on the search input
-  document.getElementById("searchInput").addEventListener("keyup", function (event) {
+  searchInput.addEventListener("keyup", function (event) {
     if (event.key === "Enter") {
       displayTasks();
     }
   });
-
 });
