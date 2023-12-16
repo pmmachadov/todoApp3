@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const completedTasksContainer = document.querySelector(".completed-tasks-container");
+  const incompletedTasksContainer = document.querySelector(".incompleted-tasks-container");
   const tasksContainer = document.getElementById("tasks-container");
   const searchInput = document.querySelector("#searchInput");
   const taskInput = document.querySelector("#taskInput");
@@ -27,37 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayTasks() {
     const searchInputValue = searchInput.value.toLowerCase();
     const tasks = getTasks();
-    tasksContainer.innerHTML = "";
+    const completedTasksContainer = document.querySelector(".completed-tasks-container");
+    const incompletedTasksContainer = document.querySelector(".incompleted-tasks-container");
 
-    const completedTasks = tasks.filter(task => task.completed);
-    const incompleteTasks = tasks.filter(task => !task.completed);
+    completedTasksContainer.innerHTML = "";
+    incompletedTasksContainer.innerHTML = "";
 
-    incompleteTasks.forEach(task => {
+    const completedTasks = tasks.filter((task) => task.completed);
+    const incompleteTasks = tasks.filter((task) => !task.completed);
+
+    incompleteTasks.forEach((task) => {
       if (task.task.toLowerCase().includes(searchInputValue)) {
         const taskElement = createTaskElement(task);
-        tasksContainer.appendChild(taskElement);
+        incompletedTasksContainer.appendChild(taskElement);
       }
     });
 
-    const completedTasksContainer = document.querySelector(`.${CLASS_COMPLETED}`);
-    if (completedTasksContainer) {
-      completedTasksContainer.remove();
-      getTasks();
-    }
-
-    if (completedTasks.length > 0) {
-      const newCompletedTasksContainer = document.createElement("div");
-      newCompletedTasksContainer.classList.add(CLASS_COMPLETED);
-
-      completedTasks.forEach(task => {
+    completedTasks.forEach((task) => {
+      if (task.task.toLowerCase().includes(searchInputValue)) {
         const taskElement = createTaskElement(task);
-        taskElement.classList.add(CLASS_COMPLETED);
-        newCompletedTasksContainer.appendChild(taskElement);
-      });
-
-      tasksContainer.appendChild(newCompletedTasksContainer);
-    }
+        taskElement.classList.add("completed");
+        completedTasksContainer.appendChild(taskElement);
+      }
+    });
   }
+
 
   function toggleFavorite(taskId, favoriteButton) {
     const tasks = getTasks().map(task => {
