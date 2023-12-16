@@ -1,7 +1,6 @@
+
 document.addEventListener("DOMContentLoaded", () => {
-  const completedTasksContainer = document.querySelector(".completed-tasks-container");
-  const incompletedTasksContainer = document.querySelector(".incompleted-tasks-container");
-  const tasksContainer = document.getElementById("tasks-container");
+
   const searchInput = document.querySelector("#searchInput");
   const taskInput = document.querySelector("#taskInput");
   const addTaskButton = document.getElementById("addTaskButton");
@@ -10,6 +9,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const TASK_CONTAINER_CLASS = "card";
   const DELETE_BTN_CLASS = "delete-btn";
   const EDIT_BTN_CLASS = "edit-btn";
+
+  const showFavoriteCheckbox = document.getElementById("showFavoriteTasks");
+  showFavoriteCheckbox.addEventListener("change", toggleShowFavoriteTasks);
+
+  function toggleShowFavoriteTasks() {
+    const showFavorite = showFavoriteCheckbox.checked;
+
+    if (showFavorite) {
+      showFavoriteTasks();
+    } else {
+      displayTasks();
+    }
+  }
 
   function getTasks() {
     const tasksString = localStorage.getItem("tasks");
@@ -53,7 +65,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
 
   function toggleFavorite(taskId, favoriteButton) {
     const tasks = getTasks().map(task => {
@@ -219,6 +230,31 @@ document.addEventListener("DOMContentLoaded", () => {
       displayTasks();
     }
   });
+
+  const favoritesLink = document.getElementById("favoritesLink");
+  favoritesLink.addEventListener("click", showFavoriteTasks);
+
+  function showFavoriteTasks() {
+    const tasks = getTasks();
+    const favoriteTasks = tasks.filter((task) => task.favorite);
+
+    const completedTasksContainer = document.querySelector(".completed-tasks-container");
+    const incompletedTasksContainer = document.querySelector(".incompleted-tasks-container");
+
+    completedTasksContainer.innerHTML = "";
+    incompletedTasksContainer.innerHTML = "";
+
+    favoriteTasks.forEach((task) => {
+      const taskElement = createTaskElement(task);
+      if (task.completed) {
+        taskElement.classList.add("completed");
+        completedTasksContainer.appendChild(taskElement);
+      } else {
+        incompletedTasksContainer.appendChild(taskElement);
+      }
+    });
+  }
+
 });
 
 const sidebar = document.querySelector('.sidebar');
@@ -237,6 +273,10 @@ function closeSidebarOutside(event) {
     sidebar.classList.remove('open');
   }
 }
+
+
+
+
 
 
 
