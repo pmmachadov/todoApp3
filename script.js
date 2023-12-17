@@ -1,21 +1,18 @@
-
-document.addEventListener("DOMContentLoaded", () => {
-
+document.addEventListener("DOMContentLoaded", function () {
   const searchInput = document.querySelector("#searchInput");
   const taskInput = document.querySelector("#taskInput");
   const addTaskButton = document.getElementById("addTaskButton");
+  const showFavoriteCheckbox = document.getElementById("showFavoriteTasks");
 
   const CLASS_COMPLETED = "completed";
   const TASK_CONTAINER_CLASS = "card";
   const DELETE_BTN_CLASS = "delete-btn";
   const EDIT_BTN_CLASS = "edit-btn";
 
-  const showFavoriteCheckbox = document.getElementById("showFavoriteTasks");
   showFavoriteCheckbox.addEventListener("change", toggleShowFavoriteTasks);
 
   function toggleShowFavoriteTasks() {
     const showFavorite = showFavoriteCheckbox.checked;
-
     if (showFavorite) {
       showFavoriteTasks();
     } else {
@@ -67,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function toggleFavorite(taskId, favoriteButton) {
-    const tasks = getTasks().map(task => {
+    const tasks = getTasks().map((task) => {
       if (task.id === taskId) {
         task.favorite = !task.favorite;
       }
@@ -78,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     displayTasks();
 
     const taskElement = favoriteButton.closest(`.${TASK_CONTAINER_CLASS}`);
-    taskElement.classList.toggle("favorite", tasks.find(task => task.id === taskId).favorite);
+    taskElement.classList.toggle("favorite", tasks.find((task) => task.id === taskId).favorite);
   }
 
   function createTaskElement(task) {
@@ -92,16 +89,24 @@ document.addEventListener("DOMContentLoaded", () => {
     taskElement.appendChild(taskTextElement);
 
     const completedCheckbox = createCheckbox(task.completed);
-    completedCheckbox.addEventListener("change", () => toggleTaskComplete(task.id, taskElement));
+    completedCheckbox.addEventListener("change", function () {
+      toggleTaskComplete(task.id, taskElement);
+    });
     taskElement.appendChild(completedCheckbox);
 
-    const favoriteButton = createButton("⭐", "favorite-btn", (event) => toggleFavorite(task.id, event.target));
+    const favoriteButton = createButton("⭐", "favorite-btn", function (event) {
+      toggleFavorite(task.id, event.target);
+    });
     taskElement.appendChild(favoriteButton);
 
-    const deleteButton = createButton("Eliminar", DELETE_BTN_CLASS, () => deleteTask(task.id));
+    const deleteButton = createButton("Eliminar", DELETE_BTN_CLASS, function () {
+      deleteTask(task.id);
+    });
     taskElement.appendChild(deleteButton);
 
-    const editButton = createButton("Editar", EDIT_BTN_CLASS, () => editTask(task.id, taskTextElement));
+    const editButton = createButton("Editar", EDIT_BTN_CLASS, function () {
+      editTask(task.id, taskTextElement);
+    });
     taskElement.appendChild(editButton);
 
     if (task.favorite) {
@@ -130,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     taskTextElement.contentEditable = true;
     taskTextElement.focus();
 
-    taskTextElement.addEventListener("blur", () => {
+    taskTextElement.addEventListener("blur", function () {
       taskTextElement.contentEditable = false;
       editTaskText(taskId, taskTextElement);
     });
@@ -155,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function toggleTaskComplete(taskId, taskElement) {
-    const tasks = getTasks().map(task => {
+    const tasks = getTasks().map((task) => {
       if (task.id === taskId) {
         task.completed = !task.completed;
       }
@@ -165,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
     displayTasks();
     const completedTasksContainer = document.querySelector(`.${CLASS_COMPLETED}`);
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
+    const taskIndex = tasks.findIndex((task) => task.id === taskId);
 
     if (taskIndex !== -1) {
       if (tasks[taskIndex].completed) {
@@ -185,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function editTaskText(taskId, taskTextElement) {
     const editedTaskText = taskTextElement.textContent.trim();
-    const tasks = getTasks().map(task => {
+    const tasks = getTasks().map((task) => {
       if (task.id === taskId) {
         task.task = editedTaskText;
       }
@@ -197,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function deleteTask(taskId) {
-    const tasks = getTasks().filter(t => t.id !== taskId);
+    const tasks = getTasks().filter((t) => t.id !== taskId);
     localStorage.setItem("tasks", JSON.stringify(tasks));
     displayTasks();
   }
@@ -205,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateTaskTextOnEnter(event, taskId, taskTextElement) {
     if (event.key === "Enter") {
       const newTaskText = event.target.textContent.trim();
-      let tasks = getTasks().map(task => {
+      let tasks = getTasks().map((task) => {
         if (task.id === taskId) {
           task.task = newTaskText;
         }
@@ -231,9 +236,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const favoritesLink = document.getElementById("favoritesLink");
-  favoritesLink.addEventListener("click", showFavoriteTasks);
-
   function showFavoriteTasks() {
     const tasks = getTasks();
     const favoriteTasks = tasks.filter((task) => task.favorite);
@@ -254,7 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-
 });
 
 const sidebar = document.querySelector('.sidebar');
@@ -273,11 +274,3 @@ function closeSidebarOutside(event) {
     sidebar.classList.remove('open');
   }
 }
-
-
-
-
-
-
-
-
